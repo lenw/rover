@@ -91,5 +91,19 @@ func (r *Rover) RunCommands(cmds []Command) {
 		r.D = c.D
 		r.X += c.X
 		r.Y += c.Y
+
+		if r.X < 0 {
+			r.X = SIZE
+		}
+		if r.Y < 0 {
+			r.Y = SIZE
+		}
+		if r.X > SIZE {
+			r.X = 0
+		}
+		if r.Y > SIZE {
+			r.Y = 0
+		}
+
 	}
 }

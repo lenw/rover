@@ -112,3 +112,14 @@ func TestRoverRight(t *testing.T) {
 	}
 
 }
+
+func TestRoverWrapping(t *testing.T) {
+
+	rover := New(WEST, 0, 0)
+
+	rover.RunCommands([]Command{FORWARD})
+	if rover.X != SIZE {
+		t.Errorf("Rover fell off the planet -> %+v", rover)
+	}
+
+}
