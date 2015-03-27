@@ -27,10 +27,8 @@ const (
 	// RIGHT command to go right
 	RIGHT = Command("r")
 
-	// LENGTH of the world
-	LENGTH = 10
-	// WIDTH of the world
-	WIDTH = 10
+	// SIZE of the world
+	SIZE = 10
 )
 
 // Rover knows where it is and where it faces
@@ -46,17 +44,32 @@ type cmdKey struct {
 }
 
 type cmdResult struct {
+	D Direction
 	X int
 	Y int
 }
 
 var changes = map[cmdKey]cmdResult{
 
-	cmdKey{NORTH, FORWARD}:  cmdResult{0, 1},
-	cmdKey{NORTH, BACKWARD}: cmdResult{0, -1},
+	cmdKey{NORTH, FORWARD}:  cmdResult{NORTH, 0, 1},
+	cmdKey{NORTH, BACKWARD}: cmdResult{NORTH, 0, -1},
+	cmdKey{NORTH, LEFT}:     cmdResult{WEST, 0, 0},
+	cmdKey{NORTH, RIGHT}:    cmdResult{EAST, 0, 0},
 
-	cmdKey{SOUTH, FORWARD}:  cmdResult{0, -1},
-	cmdKey{SOUTH, BACKWARD}: cmdResult{0, 1},
+	cmdKey{SOUTH, FORWARD}:  cmdResult{SOUTH, 0, -1},
+	cmdKey{SOUTH, BACKWARD}: cmdResult{SOUTH, 0, 1},
+	cmdKey{SOUTH, LEFT}:     cmdResult{EAST, 0, 0},
+	cmdKey{SOUTH, RIGHT}:    cmdResult{WEST, 0, 0},
+
+	cmdKey{WEST, FORWARD}:  cmdResult{WEST, -1, 0},
+	cmdKey{WEST, BACKWARD}: cmdResult{WEST, 1, 0},
+	cmdKey{WEST, LEFT}:     cmdResult{SOUTH, 0, 0},
+	cmdKey{WEST, RIGHT}:    cmdResult{NORTH, 0, 0},
+
+	cmdKey{EAST, FORWARD}:  cmdResult{EAST, 1, 0},
+	cmdKey{EAST, BACKWARD}: cmdResult{EAST, -1, 0},
+	cmdKey{EAST, LEFT}:     cmdResult{NORTH, 0, 0},
+	cmdKey{EAST, RIGHT}:    cmdResult{SOUTH, 0, 0},
 }
 
 // New creates a new rover
@@ -75,6 +88,7 @@ func (r *Rover) RunCommands(cmds []Command) {
 		// given the current direction and command lookup the change
 		c := changes[cmdKey{D: r.D, C: cmd}]
 		fmt.Printf("%v : %v -> %+v\n", r.D, cmd, c)
+		r.D = c.D
 		r.X += c.X
 		r.Y += c.Y
 	}
