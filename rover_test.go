@@ -123,3 +123,17 @@ func TestRoverWrapping(t *testing.T) {
 	}
 
 }
+
+func TestRoverCrash(t *testing.T) {
+
+	rover := New(NORTH, 1, 2)
+
+	err := rover.RunCommands([]Command{RIGHT, FORWARD})
+	if err == nil {
+		t.Errorf("Should have crashed")
+	}
+	if rover.X != 1 && rover.Y != 2 {
+		t.Errorf("Should not have moved")
+	}
+
+}

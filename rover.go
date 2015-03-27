@@ -72,9 +72,17 @@ var changes = map[cmdKey]cmdResult{
 	cmdKey{EAST, RIGHT}:    cmdResult{SOUTH, 0, 0},
 }
 
+type position struct {
+	x int
+	y int
+}
+
+var obstacles = map[position]bool{
+	position{2, 2}: true,
+}
+
 // New creates a new rover
 func New(d Direction, x, y int) *Rover {
-
 	return &Rover{
 		X: x,
 		Y: y,
@@ -83,14 +91,24 @@ func New(d Direction, x, y int) *Rover {
 }
 
 // RunCommands processes the list of commands updating the position of the rover
-func (r *Rover) RunCommands(cmds []Command) {
+func (r *Rover) RunCommands(cmds []Command) error {
 	for _, cmd := range cmds {
 		// given the current direction and command lookup the change
 		c := changes[cmdKey{D: r.D, C: cmd}]
-		fmt.Printf("%v : %v -> %+v\n", r.D, cmd, c)
+
+		tx := r.X + c.X
+		ty := r.Y + c.Y
+
+		fmt.Printf("%v : %v -> %+v >> %v,%v \n", r.D, cmd, c, tx, ty)
+
+		if _, problem := obstacles[position{tx, ty}]; problem {
+			fmt.Printf("Obstacle found at %d %d\n", tx, ty)
+			return fmt.Errorf("Obstacle at %d,%d - stopping", tx, ty)
+		}
+
 		r.D = c.D
-		r.X += c.X
-		r.Y += c.Y
+		r.X = tx
+		r.Y = ty
 
 		if r.X < 0 {
 			r.X = SIZE
@@ -104,6 +122,6 @@ func (r *Rover) RunCommands(cmds []Command) {
 		if r.Y > SIZE {
 			r.Y = 0
 		}
-
 	}
+	return nil
 }
